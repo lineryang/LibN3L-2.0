@@ -57,7 +57,7 @@ struct Param : BaseParam {
 	}
 
 	inline void randpoint(int& idx, int &idy) {
-		//select indexes randomly		
+		//select indexes randomly
 		std::vector<int> idRows, idCols;
 		idRows.clear();
 		idCols.clear();
@@ -85,15 +85,24 @@ struct Param : BaseParam {
 		grad.vec() = grad.vec() * scale;
 	}
 
-	inline void save(std::ofstream &os)const {
-		val.save(os);
-		aux_square.save(os);
-	}
+  inline void save(std::ofstream &os) const {
+    val.save(os);
+    aux_square.save(os);
+    aux_mean.save(os);
+    os << iter << endl;
 
-	inline void load(std::ifstream &is, AlignedMemoryPool* mem = NULL) {
-		val.load(is, mem);
-		aux_square.load(is, mem);
-	}
+    for (int idx = 0; idx < grad.size; idx++) {
+      if (grad.v[idx] != 0)
+        std::cout << "save param error" << endl;
+    }
+  }
+
+  inline void load(std::ifstream &is, AlignedMemoryPool *mem = NULL) {
+    val.load(is, mem);
+    aux_square.load(is, mem);
+    aux_mean.load(is, mem);
+    is >> iter;
+  }
 };
 
 #endif /* PARAM_H_ */

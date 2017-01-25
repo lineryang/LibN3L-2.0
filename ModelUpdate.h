@@ -29,13 +29,13 @@ public:
 		_eps = 1e-8;
 
 		_belta1 = 0.9;
-		_belta2 = 0.999;
+		_belta2 = 0.9;
 	}
 
 
 public:
 
-	inline void addParam(BaseParam* param){
+	inline void addParam(BaseParam* param)
 		_params.push_back(param);
 	}
 
