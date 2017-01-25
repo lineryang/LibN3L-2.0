@@ -35,7 +35,7 @@ public:
 
 public:
 
-	inline void addParam(BaseParam* param)
+	inline void addParam(BaseParam* param){
 		_params.push_back(param);
 	}
 
