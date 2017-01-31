@@ -233,4 +233,98 @@ public:
 
 };
 
+struct BiFixNode : Node {
+public:
+	PNode in1, in2;
+	Tensor1D ty, lty;
+
+	int inDim1, inDim2;
+
+	BiParams* param;
+
+	dtype (*activate)(const dtype&);   // activation function
+	dtype (*derivate)(const dtype&, const dtype&);  // derivation function of activation function
+
+public:
+	BiFixNode() : Node() {
+		in1 = NULL;
+		in2 = NULL;
+
+		activate = ftanh;
+		derivate = dtanh;
+
+		param = NULL;
+		inDim1 = 0;
+		inDim2 = 0;
+	}
+
+	inline void setParam(BiParams* paramInit) {
+		param = paramInit;
+		inDim1 = param->W1.inDim();
+		inDim2 = param->W2.inDim();
+	}
+
+
+	inline void clearValue(){
+		Node::clearValue();
+		in1 = NULL;
+		in2 = NULL;
+		ty.zero();
+		lty.zero();
+	}
+
+	// define the activation function and its derivation form
+	inline void setFunctions(dtype (*f)(const dtype&), dtype (*f_deri)(const dtype&, const dtype&)) {
+		activate = f;
+		derivate = f_deri;
+	}
+
+	inline void init(int dim, dtype dropOut, AlignedMemoryPool* mem = NULL){
+		Node::init(dim, dropOut, mem);
+		ty.init(dim, mem);
+		lty.init(dim, mem);
+	}
+
+public:
+	void forward(Graph* cg, PNode x1, PNode x2) {
+		in1 = x1;
+		in2 = x2;
+		ty.mat() = param->W1.val.mat() * in1->val.mat() + param->W2.val.mat() * in2->val.mat();
+
+		if(param->bUseB){
+			ty.vec() += param->b.val.vec();
+		}
+
+		val.vec() = ty.vec().unaryExpr(ptr_fun(activate));
+
+		in1->increase_loc();
+		in2->increase_loc();
+
+		cg->addNode(this);
+	}
+
+	void backward() {
+		lty.vec() = loss.vec() * ty.vec().binaryExpr(val.vec(), ptr_fun(derivate));
+
+		param->W1.grad.mat() += lty.mat() * in1->val.tmat();
+		param->W2.grad.mat() += lty.mat() * in2->val.tmat();
+
+		if(param->bUseB){
+			param->b.grad.vec() += lty.vec();
+		}
+
+//		in1->loss.mat() += param->W1.val.mat().transpose() * lty.mat();
+//		in2->loss.mat() += param->W2.val.mat().transpose() * lty.mat();
+
+	}
+
+	inline void unlock(){
+		in1->decrease_loc();
+		in2->decrease_loc();
+		if(!lossed)return;
+		in1->lossed = true;
+		in2->lossed = true;
+	}
+
+};
 #endif /* BIOP_H_ */
