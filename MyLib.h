@@ -1,13 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////////////
-// File Name   : MyLib.h
-// Project Name: IRLAS
-// Author      : Huipeng Zhang (zhp@ir.hit.edu.cn)
-// Environment : Microsoft Visual C++ 6.0
-// Description : some utility functions
-// Time        : 2005.9
-// History     :
-// CopyRight   : HIT-IRLab (c) 2001-2005, all rights reserved.
-/////////////////////////////////////////////////////////////////////////////////////
 #ifndef _MYLIB_H_
 #define _MYLIB_H_
 

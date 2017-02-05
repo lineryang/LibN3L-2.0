@@ -330,6 +330,11 @@ inline dtype fexp(const dtype& x) {
 	return exp(x);
 }
 
+inline dtype felu(const dtype& x) {
+	if (x <= 0) return exp(x) - 1;
+	return x;
+}
+
 //derive function
 inline dtype dequal(const dtype& x, const dtype& y) {
 	return 1;
@@ -352,7 +357,10 @@ inline dtype dexp(const dtype& x, const dtype& y) {
 	return y;
 }
 
-
+inline dtype delu(const dtype& x, const dtype& y) {
+		if (x <= 0) return y + 1;
+	  return 1;
+}
 
 
 
