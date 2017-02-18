@@ -90,11 +90,6 @@ struct Param : BaseParam {
     aux_square.save(os);
     aux_mean.save(os);
     os << iter << endl;
-
-    for (int idx = 0; idx < grad.size; idx++) {
-      if (grad.v[idx] != 0)
-        std::cout << "save param error" << endl;
-    }
   }
 
   inline void load(std::ifstream &is, AlignedMemoryPool *mem = NULL) {
