@@ -337,7 +337,7 @@ inline void clean_str(string &str) {
   }
 }
 
-inline bool my_getline(ifstream &inf, string &line) {
+inline bool my_getline(istream &inf, string &line) {
   if (!getline(inf, line))
     return false;
   int end = line.size() - 1;
